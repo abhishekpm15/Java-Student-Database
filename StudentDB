@@ -1,0 +1,85 @@
+import java.sql.*;
+import java.util.*;
+public class Main {
+	 private static Connection con=  null;
+	 private static Scanner sc = new Scanner(System.in);
+	 
+	 public static void main(String[] args) {
+		
+		Main m = new Main();
+		while(true)
+			{
+			System.out.println("Table contains ID ,NAME,AGE :");
+			System.out.println("1.Insert a Record");
+			System.out.println("2.Delete a Record");
+			System.out.println("3.Display Records");
+			System.out.println("4.Exit");
+			
+			int choice = sc.nextInt();
+			switch(choice) {
+			case 1: m.insertRecord();
+					break;
+			case 2: m.deleteRecord();
+					break;
+			case 3:m.printRecord();
+					break;
+			case 4: return;
+			}
+		}
+	}
+	
+	 void insertRecord() {
+		try {	
+			System.out.print("\nTable contains ID, NAME, AGE\n");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsdb","root","Abhi123!@#");
+			int id =sc.nextInt();
+			String name =sc.next();
+			int age =sc.nextInt();
+			PreparedStatement prep = con.prepareStatement("insert into students(ID,NAME,AGE) values(?,?,?)");
+			prep.setInt(1, id);
+			prep.setString(2, name);
+			prep.setInt(3, age);
+			prep.executeUpdate();
+			System.out.print("----------Inserted a record---------\n");
+			con.close();
+		}
+		catch(Exception e){
+			System.out.println(e.toString());
+		}
+		
+	}
+	void deleteRecord() {
+		try {
+		System.out.println("Enter id to delete a record :");
+		con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsdb","root","Abhi123!@#");
+		int id =sc.nextInt();
+		String query="delete from students where ID=" + id;
+		Statement st = con.createStatement();
+		st.executeUpdate(query);
+		System.out.print("----------Deleted a record---------\n");
+		con.close();
+	}
+	catch(Exception e){
+		System.out.println(e.toString());
+	}
+
+}
+	
+	void printRecord() {
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsdb","root","Abhi123!@#");
+			String query="Select * from students";
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(query); 
+			while(rs.next()) {
+				System.out.println(rs.getInt(1)+" " +rs.getString(2)+" "+rs.getInt(3));
+			}
+			System.out.print("----------Records are printed---------\n");
+			con.close();
+		}
+		catch(Exception e){
+			System.out.println(e.toString());
+		}
+		
+	}
+}
